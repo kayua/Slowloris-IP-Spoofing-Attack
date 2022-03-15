@@ -1,4 +1,4 @@
-import random
+from random import randint
 
 from scapy.layers.http import HTTP
 from scapy.layers.inet import IP
@@ -11,6 +11,7 @@ DEFAULT_DESTINATION_ADDRESS = '127.0.0.1'
 DEFAULT_TIME_LIFE_PACKET = 10
 DEFAULT_SOURCE_PORT = 80
 DEFAULT_DESTINATION_PORT = 80
+DEFAULT_NUMBER_RANDOM_ADDRESS = 100
 
 
 def create_header_network_layer(tll=DEFAULT_TIME_LIFE_PACKET, source_address=DEFAULT_SOURCE_ADDRESS,
@@ -36,28 +37,24 @@ def create_header_application_layer(transport_header=None, requisition=None, int
     return application_header
 
 
-def create_spoofing_packet(requisition):
-    spoofing_packet = "GET /{} HTTP/2.0 \n\n".format(requisition)
+def create_spoofing_packet(requisition, version=2.0):
+    spoofing_packet = "GET /{} HTTP/{} \n\n".format(requisition, version)
     spoofing_packet = bytes(spoofing_packet, "utf-8")
     return spoofing_packet
 
 
-def get_random_address_list(number_address, first_octet=None, second_octet=None, third_octet=None,
-                            fourth_octet=None):
-
-    if first_octet is None: first_octet = [random.randint(0, 255) for i in range(number_address)]
-    if second_octet is None: second_octet = [random.randint(0, 255) for i in range(number_address)]
-    if third_octet is None: third_octet = [random.randint(0, 255) for i in range(number_address)]
-    if fourth_octet is None: fourth_octet = [random.randint(0, 255) for i in range(number_address)]
+def get_random_address_list(number_address=DEFAULT_NUMBER_RANDOM_ADDRESS):
+    list_address = [[randint(0, 255), randint(0, 255), randint(0, 255), randint(0, 255)] for i in range(number_address)]
+    list_address = ['.'.join(list(map(str, i))) for i in list_address]
+    return list_address
 
 
+# packet_requisition = create_spoofing_packet('')
 
+# packet_spoofing = create_header_network_layer(source_address='192.168.1.103', destination_address='200.132.146.44')
+# packet_spoofing = create_header_transport_layer(packet_spoofing)
+# packet_spoofing = create_header_application_layer(packet_spoofing, packet_requisition)
 
-
-packet_requisition = create_spoofing_packet('')
-
-packet_spoofing = create_header_network_layer(source_address='192.168.1.103', destination_address='200.132.146.44')
-packet_spoofing = create_header_transport_layer(packet_spoofing)
-packet_spoofing = create_header_application_layer(packet_spoofing, packet_requisition)
-
-send(packet_spoofing * 1)
+random_address = get_random_address_list(5)
+print(random_address)
+# send(packet_spoofing * 1)
