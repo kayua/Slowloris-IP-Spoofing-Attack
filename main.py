@@ -1,9 +1,10 @@
-import random
-
-from scapy.layers.http import HTTP, HTTPRequest
+from scapy.layers.http import HTTP
 from scapy.layers.inet import IP, TCP
 from scapy.sendrecv import send
 
+DEFAULT_HTTP_VERSION = 2.0
+DEFAULT_SOURCE_ADDRESS = '127.0.0.1'
+DEF
 
 def create_header_network_layer(tll=10, source_address='127.0.0.1', destination_address='127.0.0.1'):
     network_header = IP()
@@ -26,13 +27,16 @@ def create_header_application_layer(transport_header=None, requisition=None, int
     return application_header
 
 
+def create_spoofing_packet(requisition):
+    spoofing_packet = "GET /{} HTTP/2.0 \n\n".format(requisition)
+    spoofing_packet = bytes(spoofing_packet, "utf-8")
+    return spoofing_packet
 
 
-b = "GET /index.html HTTP/2.0 \n\n"
-b = bytes(b, "utf-8")
+packet_requisition = create_spoofing_packet('')
 
-packet_spoofing = create_header_network_layer(source_address='192.168.1.103', destination_address='172.217.29.4')
+packet_spoofing = create_header_network_layer(source_address='192.168.1.103', destination_address='200.132.146.44')
 packet_spoofing = create_header_transport_layer(packet_spoofing)
-packet_spoofing = create_header_application_layer(packet_spoofing, b)
+packet_spoofing = create_header_application_layer(packet_spoofing, packet_requisition)
 
-send(packet_spoofing)
+send(packet_spoofing * 1)
