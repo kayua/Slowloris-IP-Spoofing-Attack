@@ -2,18 +2,10 @@ from scapy.layers.http import HTTP
 from scapy.layers.inet import TCP
 from scapy.layers.inet import IP
 
-from main import DEFAULT_TIME_LIFE_PACKET
-from main import DEFAULT_DESTINATION_PORT
-from main import DEFAULT_SOURCE_ADDRESS
-from main import DEFAULT_DESTINATION_ADDRESS
-from main import DEFAULT_SOURCE_PORT
-
 
 class Header:
 
-    def __init__(self, time_life_packet=DEFAULT_TIME_LIFE_PACKET, source_address=DEFAULT_SOURCE_ADDRESS,
-                 destination_address=DEFAULT_DESTINATION_ADDRESS, source_port=DEFAULT_SOURCE_PORT,
-                 destination_port=DEFAULT_DESTINATION_PORT, internal=1):
+    def __init__(self, time_life_packet, source_address, destination_address, source_port, destination_port, internal=1):
 
         self.time_life_packet = time_life_packet
         self.source_address = source_address
@@ -40,3 +32,6 @@ class Header:
         application_header = transport_header / HTTP(requisition)
         application_header.internal = self.internal
         return application_header
+
+    def set_source_address(self, new_address):
+        self.source_address = new_address
