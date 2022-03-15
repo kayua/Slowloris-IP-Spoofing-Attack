@@ -1,5 +1,8 @@
+import random
+
 from scapy.layers.http import HTTP
-from scapy.layers.inet import IP, TCP
+from scapy.layers.inet import IP
+from scapy.layers.inet import TCP
 from scapy.sendrecv import send
 
 DEFAULT_HTTP_VERSION = 2.0
@@ -37,6 +40,15 @@ def create_spoofing_packet(requisition):
     spoofing_packet = "GET /{} HTTP/2.0 \n\n".format(requisition)
     spoofing_packet = bytes(spoofing_packet, "utf-8")
     return spoofing_packet
+
+
+def get_random_address_list(number_address, first_octet=None, second_octet=None, third_octet=None,
+                            fourth_octet=None):
+    if first_octet is None: first_octet = [random.randint(0, 255) for i in range(number_address)]
+
+    if second_octet is None: second_octet = [random.randint(0, 255) for i in range(number_address)]
+
+    random_list = random.randint(0, 22)
 
 
 packet_requisition = create_spoofing_packet('')
