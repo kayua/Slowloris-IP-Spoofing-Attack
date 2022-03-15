@@ -30,11 +30,10 @@ class Header:
         network_header.dst = self.destination_address
         return network_header
 
-    def create_header_transport_layer(self, ip_header=None, source_port=DEFAULT_SOURCE_PORT,
-                                      destination_port=DEFAULT_DESTINATION_PORT):
+    def create_header_transport_layer(self, ip_header=None):
         transport_header = ip_header / TCP()
-        transport_header.dport = destination_port
-        transport_header.sport = source_port
+        transport_header.dport = self.destination_port
+        transport_header.sport = self.source_port
         return transport_header
 
     def create_header_application_layer(self, transport_header=None, requisition=None, internal=1):
