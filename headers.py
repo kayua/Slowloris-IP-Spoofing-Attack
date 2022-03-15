@@ -36,7 +36,7 @@ class Header:
         transport_header.sport = self.source_port
         return transport_header
 
-    def create_header_application_layer(self, transport_header=None, requisition=None, internal=1):
+    def create_header_application_layer(self, transport_header=None, requisition=None):
         application_header = transport_header / HTTP(requisition)
-        application_header.internal = internal
+        application_header.internal = self.internal
         return application_header
