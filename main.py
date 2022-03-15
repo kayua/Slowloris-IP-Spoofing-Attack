@@ -113,6 +113,8 @@ def add_arguments(parser):
     help_msg = 'Define source port (Default {})'.format(DEFAULT_SOURCE_PORT)
     parser.add_argument("--source_port", type=int, help=help_msg, default=DEFAULT_SOURCE_PORT)
 
+    help_msg = 'Define size list random address (Default {})'.format(DEFAULT_NUMBER_RANDOM_ADDRESS)
+    parser.add_argument("--number_address", type=int, help=help_msg, default=DEFAULT_NUMBER_RANDOM_ADDRESS)
 
     return parser
 
