@@ -4,9 +4,12 @@ from scapy.sendrecv import send
 
 DEFAULT_HTTP_VERSION = 2.0
 DEFAULT_SOURCE_ADDRESS = '127.0.0.1'
-DEF
+DEFAULT_DESTINATION_ADDRESS = '127.0.0.1'
+DEFAULT_TIME_LIFE_PACKET = 10
 
-def create_header_network_layer(tll=10, source_address='127.0.0.1', destination_address='127.0.0.1'):
+
+def create_header_network_layer(tll=DEFAULT_TIME_LIFE_PACKET, source_address=DEFAULT_SOURCE_ADDRESS,
+                                destination_address=DEFAULT_DESTINATION_ADDRESS):
     network_header = IP()
     network_header.tll = tll
     network_header.src = source_address
