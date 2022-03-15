@@ -44,11 +44,25 @@ def create_spoofing_packet(requisition):
 
 def get_random_address_list(number_address, first_octet=None, second_octet=None, third_octet=None,
                             fourth_octet=None):
-    if first_octet is None: first_octet = [random.randint(0, 255) for i in range(number_address)]
+    if first_octet is None:
+        first_octet = [random.randint(0, 255) for i in range(number_address)]
 
-    if second_octet is None: second_octet = [random.randint(0, 255) for i in range(number_address)]
+    else:
+        first_octet = [first_octet]
 
-    random_list = random.randint(0, 22)
+    if second_octet is None:
+
+        second_octet = [random.randint(0, 255) for i in range(number_address)]
+
+    else:
+        second_octet = [second_octet]
+
+    if third_octet is None:
+
+        third_octet = [random.randint(0, 255) for i in range(number_address)]
+
+    else:
+        third_octet = [third_octet]
 
 
 packet_requisition = create_spoofing_packet('')
