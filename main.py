@@ -6,6 +6,8 @@ DEFAULT_HTTP_VERSION = 2.0
 DEFAULT_SOURCE_ADDRESS = '127.0.0.1'
 DEFAULT_DESTINATION_ADDRESS = '127.0.0.1'
 DEFAULT_TIME_LIFE_PACKET = 10
+DEFAULT_SOURCE_PORT = 80
+DEFAULT_DESTINATION_PORT = 80
 
 
 def create_header_network_layer(tll=DEFAULT_TIME_LIFE_PACKET, source_address=DEFAULT_SOURCE_ADDRESS,
@@ -17,7 +19,8 @@ def create_header_network_layer(tll=DEFAULT_TIME_LIFE_PACKET, source_address=DEF
     return network_header
 
 
-def create_header_transport_layer(ip_header=None, source_port=80, destination_port=80):
+def create_header_transport_layer(ip_header=None, source_port=DEFAULT_SOURCE_PORT,
+                                  destination_port=DEFAULT_DESTINATION_PORT):
     transport_header = ip_header / TCP()
     transport_header.dport = destination_port
     transport_header.sport = source_port
