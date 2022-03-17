@@ -35,8 +35,8 @@ except ImportError as error:
 
 DEFAULT_HTTP_VERSION = 2.0
 DEFAULT_NUMBER_PACKETS_PER_CYCLES = 1
-DEFAULT_NUMBER_CYCLES = 10
-DEFAULT_TIME_BETWEEN_CYCLES = 10
+DEFAULT_NUMBER_CYCLES = 100
+DEFAULT_TIME_BETWEEN_CYCLES = 5
 DEFAULT_SOURCE_ADDRESS = '10.10.10.10'
 DEFAULT_RANDOM_ADDRESS_SOURCE = True
 DEFAULT_DESTINATION_ADDRESS = '10.10.10.11'
@@ -73,7 +73,7 @@ def attack_function(args):
     list_address = []
 
     if args.random_ip:
-        list_address = get_random_address_list(args.number_address)
+        list_address = get_random_address_list(args.number_address*10)
 
     logging.info('\nStart attack to Address {}\n'.format(args.destination_ip))
 
