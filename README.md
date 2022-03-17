@@ -11,3 +11,12 @@
 
 3. Run
     - python3 main.py
+   
+## Environment:
+
+   Operational System: Ubuntu 20.04
+   Available memory: 8GB
+   Available storage: 32GB
+   Python version: 3.10.8
+   
+   
